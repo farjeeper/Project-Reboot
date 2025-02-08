@@ -2,25 +2,27 @@
 
 FVector* __fastcall AI::GetRandomLocationSafeToReach(UObject* AIBotController, FVector* outVec, __int64* a3)
 {
-	// std::cout << "aa!\n";
+	// std::cout << "aa!\\n";
 	// FVector aa = FVector{ 1250, 1818, 3284 };
 	// return &aa;
 
-	std::cout << "default outVec: " << outVec->Describe() << '\n';
-	std::cout << "a3: " << a3 << '\n';
+	auto PlayerController = Helper::GetLocalPlayerController();
+	if (!PlayerController)
+	{
+		std::cerr << "Failed to get local player controller.\\n";
+		return nullptr;
+	}
 
-	auto vec = GetRandomLocationSafeToReachO(AIBotController, outVec, a3);
-	std::cout << "og ret: " << vec->Describe() << '\n';
+	auto PlayerPawn = Helper::GetPawnFromController(PlayerController);
+	if (!PlayerPawn)
+	{
+		std::cerr << "Failed to get local player pawn.\\n";
+		return nullptr;
+	}
 
-	static auto ReachLocationValidationModeOffset = AIBotController->GetOffset("ReachLocationValidationMode");
-	auto ReachLocationValidationMode = Get<EReachLocationValidationMode>(AIBotController, ReachLocationValidationModeOffset);
-	std::cout << "ReachLocationValidationMode beofre: " << (int)(*ReachLocationValidationMode) << '\n';
+	auto PlayerLocation = Helper::GetActorLocation(PlayerPawn);
+	std::cout << "Player location: " << PlayerLocation.Describe() << '\\n';
 
-	// *ReachLocationValidationMode = EReachLocationValidationMode::None;
-
-	// auto aftervec = GetRandomLocationSafeToReachO(AIBotController, outVec, a3);
-	// std::cout << "after vec: " << aftervec->Describe() << '\n';
-
-	*outVec = FVector{ 1250, 1818, 3284 };
-	return outVec; // outVec;
+	*outVec = PlayerLocation;
+	return outVec;
 }
